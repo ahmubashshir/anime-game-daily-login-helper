@@ -1,4 +1,4 @@
-name: Check in
+name: Genshin check-in
 
 on:
   # run automatically twice a day
