@@ -1,0 +1,11 @@
+name: 'Genshin Impact Daily Check-in Web Event'
+description: 'Check-in to Genshin Impact web event daily'
+runs:
+  using: "Docker"
+  image: "Dockerfile"
+  env:
+    MHYACID: ${{ secrets.MHYACID }}
+    MHYUUID: ${{ secrets.MHYUUID }}
+    MHYTOKEN: ${{ secrets.MHYTOKEN }}
+
+# vim: ft=yaml:ts=2:et:

@@ -1,0 +1,20 @@
+on:
+  # run automatically twice a day
+  schedule:
+  - cron: "0 */12 * * *"
+
+  # allows to manually run the job at any time
+  workflow_dispatch:
+  # run on every push on the master branch
+  push:
+    branches:
+    - master
+
+jobs:
+  # check-in now
+  check-in:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ./.github/actions/gi-check-in
+# vim: ft=yaml:ts=2:et:
