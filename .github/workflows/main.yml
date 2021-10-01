@@ -1,3 +1,5 @@
+name: Check in
+
 on:
   # run automatically twice a day
   schedule:
