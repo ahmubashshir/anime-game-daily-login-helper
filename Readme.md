@@ -1,7 +1,5 @@
 # GitHub action for checking in on Genshin Web Event
 
-----------
-
 Setup this repo, then forget the hassle of checking in to Genshin Daily Web Event manually.
 
 
