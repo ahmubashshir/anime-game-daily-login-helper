@@ -12,8 +12,8 @@ inputs:
     required: true
 
 runs:
-  using: "Docker"
-  image: "Dockerfile"
+  using: Docker
+  image: ../../../Dockerfile
   env:
     MHYACID: ${{ inputs.id }}
     MHYUUID: ${{ inputs.uuid }}
