@@ -1,10 +1,8 @@
-from os import environ as ENV
+""" API constants """
 
-EVENT_DOMAIN = 'hk4e-api-os'
-ACT_ID = 'e202102251931481'
+DOMAIN = 'hk4e-api-os'
+EVENT = 'e202102251931481'
 
-URL = 'https://%s.mihoyo.com/event/sol/{}?lang=en-us&act_id=%s' % (
-    EVENT_DOMAIN, ACT_ID
-)
+URL = f'https://{DOMAIN}.mihoyo.com/event/sol/{{}}'
 
 # vim: ft=python3:ts=4:et:
