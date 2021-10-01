@@ -17,4 +17,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: ./.github/actions/gi-check-in
+      with:
+        id:    ${{ secrets.MHYACID }}
+        uuid:  ${{ secrets.MHYUUID }}
+        token: ${{ secrets.MHYTOKEN }}
 # vim: ft=yaml:ts=2:et:

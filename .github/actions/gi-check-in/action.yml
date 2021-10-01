@@ -1,11 +1,22 @@
 name: 'Genshin Impact Daily Check-in Web Event'
 description: 'Check-in to Genshin Impact web event daily'
+inputs:
+  id:
+    description: Mihoyo User ID
+    required: true
+  uuid:
+    description: Mihoyo User UUID
+    required: true
+  token:
+    description: Mihoyo Session Token
+    required: true
+
 runs:
   using: "Docker"
   image: "Dockerfile"
   env:
-    MHYACID: ${{ secrets.MHYACID }}
-    MHYUUID: ${{ secrets.MHYUUID }}
-    MHYTOKEN: ${{ secrets.MHYTOKEN }}
+    MHYACID: ${{ inputs.id }}
+    MHYUUID: ${{ inputs.uuid }}
+    MHYTOKEN: ${{ inputs.token }}
 
 # vim: ft=yaml:ts=2:et:
