@@ -9,7 +9,8 @@ license = "GPL3"
 python = "^3.6"
 requests = "^2.26.0"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.scripts]
+genshin = "genshin_check_in:main"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

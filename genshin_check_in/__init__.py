@@ -7,7 +7,7 @@ def main(token=None, ac_id=None, uuid=None):
     if not token:
         token = _ENV['MHYTOKEN']
     if not ac_id:
-        ac_id = _ENV['MHYACID']
+        ac_id = int(_ENV['MHYACID'])
     if not uuid:
         uuid = _ENV['MHYUUID']
     client = _Client(token, ac_id, uuid)
