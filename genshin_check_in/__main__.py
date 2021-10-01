@@ -1,5 +1,7 @@
-from . import main
+""" The main module """
 from argparse import ArgumentParser
+
+from . import main
 
 if __name__ == '__main__':
     parser = ArgumentParser()
