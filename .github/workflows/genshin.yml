@@ -1,16 +1,11 @@
 name: Genshin check-in
 
 on:
-  # run automatically twice a day
-  schedule:
-  - cron: "0 */12 * * *"
-
-  # allows to manually run the job at any time
+  # Allow manual start
   workflow_dispatch:
-  # run on every push on the master branch
-  push:
-    branches:
-    - master
+  # Run job on 08:15UTC/00:15CST daily
+  schedule:
+  - cron: "15 8 * * *"
 
 jobs:
   # check-in now
