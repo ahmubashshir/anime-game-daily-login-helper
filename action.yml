@@ -1,5 +1,9 @@
 name: 'Genshin Impact Daily Check-in Web Event'
 description: 'Check-in to Genshin Impact web event daily'
+branding:
+  icon: 'clock'
+  color: 'gray-dark'
+
 inputs:
   id:
     description: Mihoyo User ID
