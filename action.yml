@@ -17,7 +17,7 @@ inputs:
 
 runs:
   using: Docker
-  image: ghcr.io/ahmubashshir/genshin-check-in:latest
+  image: docker://ghcr.io/ahmubashshir/genshin-check-in:latest
   env:
     MHYACID: ${{ inputs.id }}
     MHYUUID: ${{ inputs.uuid }}
