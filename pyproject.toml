@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "genshin-check-in"
-version = "0.1.0"
+version = "0.1.1"
 description = "Automatically check-in to Genshin Impact monthly check-in web event"
 authors = ["Mubashshir <ahmubashshir@gmail.com>"]
 license = "GPL3"
