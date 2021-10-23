@@ -1,6 +1,8 @@
 FROM python:3.8-slim AS build
 
+LABEL "org.opencontainers.image.source" = "https://github.com/ahmubashshir/genshin-check-in"
 LABEL "maintainer" = "Mubashshir <ahmubashshir@gmail.com>"
+
 WORKDIR /build
 
 RUN addgroup --system user && adduser --system --no-create-home --ingroup user user
