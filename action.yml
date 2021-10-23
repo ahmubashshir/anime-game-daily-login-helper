@@ -13,7 +13,7 @@ inputs:
 
 runs:
   using: Docker
-  image: ../../../Dockerfile
+  image: Dockerfile
   env:
     MHYACID: ${{ inputs.id }}
     MHYUUID: ${{ inputs.uuid }}
