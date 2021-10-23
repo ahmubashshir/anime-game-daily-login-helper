@@ -31,12 +31,16 @@ jobs:
       uses: docker/metadata-action@v3
       with:
         images: ghcr.io/${{ github.repository }}
+        flavor: |
+          latest=false
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
       with:
         context: .
-        tags: ${{ steps.meta.outputs.tags }}
+        tags: |
+          ${{ steps.meta.outputs.tags }}
+          ghcr.io/${{ github.repository }}:latest
         labels: ${{ steps.meta.outputs.labels }}
 
 # vim: ft=yaml:ts=2:et:
