@@ -12,8 +12,7 @@ jobs:
   check-in:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: ./
+    - uses: ahmubashshir/genshin-check-in@master
       with:
         id:    ${{ secrets.MHYACID }}
         uuid:  ${{ secrets.MHYUUID }}
