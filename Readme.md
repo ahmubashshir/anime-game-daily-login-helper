@@ -21,9 +21,9 @@ Setup this repo, then forget the hassle of checking in to Genshin Daily Web Even
    on:
      # Allow manual start
      workflow_dispatch:
-     # Run job on 08:15UTC/00:15CST daily
+     # Run job on 16:15UTC/00:15CST daily
      schedule:
-     - cron: "15 8 * * *"
+     - cron: "15 16 * * *"
 
    jobs:
      # check-in now
