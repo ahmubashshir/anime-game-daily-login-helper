@@ -8,6 +8,7 @@ license = "GPL3"
 [tool.poetry.dependencies]
 python = "^3.6"
 requests = "^2.26.0"
+toml = "^0.10.2"
 
 [tool.poetry.scripts]
 genshin = "genshin_check_in.__main__:main"
