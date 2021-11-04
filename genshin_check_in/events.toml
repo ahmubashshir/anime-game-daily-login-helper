@@ -1,0 +1,22 @@
+[[event]]
+name = "Check-in"
+id = "e202102251931481"
+recurring = true
+
+[[event]]
+name = "Yummy! Barbecue Under the Stars"
+method = "POST"
+id = "e20211101bakefish"
+task = "collect_fish"
+start = 1636035633
+end = 1636122033
+url = '{id}/{task}'
+success = "Collected fish: {col_fish_num}"
+
+[event.params]
+uid = 'ENV:REGIONAL_UID'
+region = 'ENV:REGION'
+[event.json]
+fir = 0
+
+# vim: ft=toml:ts=4:et:
