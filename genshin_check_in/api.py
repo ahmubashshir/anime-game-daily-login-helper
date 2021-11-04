@@ -3,13 +3,14 @@ import re
 
 from requests import Session as _Session
 
-from .data import URL, EVENT
+URL = 'https://hk4e-api-os.mihoyo.com/event/{}'
 
 
 class Client:
     """ Mihoyo API client """
     _user: dict = None
     _session: _Session = None
+    _events: list = []
 
     def __init__(self, token: str = None, ac_id: int = None, uuid: str = None):
         """ Initialize API session """
@@ -52,11 +53,12 @@ class Client:
             'Referer': 'https://webstatic-sea.mihoyo.com/'
         })
 
-    def _call(self, method, url, *args, **kwargs):
-        if 'params' not in kwargs:
-            kwargs['params'] = {}
+    def _call(self, method, path, *args, **kwargs):
+        kwargs['params'] = kwargs.get('params', {})
         kwargs['params']['lang'] = 'en-us'
-        _data = self._session.request(method, url, *args, **kwargs)
+        _data = self._session.request(method, URL.format(path),
+                                      *args, **kwargs)
+
         if _data and _data.status_code == 200:
             _data = _data.json()
 
@@ -68,8 +70,8 @@ class Client:
     def user(self):
         """ User Info """
         if not self._user:
-            self._user = self._call('GET', URL.format('info'),
-                                    params={'act_id': EVENT})
+            self._user = self._call('GET', 'sol/info',
+                                    params={'act_id': self.events[0]['id']})
         return self._user
 
     @property
@@ -84,11 +86,30 @@ class Client:
 
     def check_in(self):
         """ Check-in now """
-        data = self._call('POST', URL.format('sign'),
-                          json={'act_id': EVENT})
+        data = self._call('POST', 'sol/sign',
+                          json={'act_id': self.events[0]['id']})
         if data and data['code'] == 'ok':
             self._user = None
             return True
         return False
 
+    @property
+    def events(self):
+        """ Load events from events.toml """
+        # pylint: disable=import-outside-toplevel
+        import toml
+        from datetime import datetime as date
+        from os import path
+
+        data = []
+        if not len(self._events) > 0:
+            with open(path.join(path.dirname(__file__), 'events.toml'), encoding="utf8") as file:
+                data = toml.load(file).get('event', [])
+            self._events = [
+                event for event in data
+                if event.get('recurring', False)
+                or date.utcnow() > date.utcfromtimestamp(event['start'])
+                and date.utcnow() < date.utcfromtimestamp(event['end'])
+            ]
+        return self._events
 # vim: ft=python3:ts=4:et:
