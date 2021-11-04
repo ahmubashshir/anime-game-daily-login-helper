@@ -38,5 +38,10 @@ Setup this repo, then forget the hassle of checking in to Genshin Daily Web Even
            uuid:  ${{ secrets.MHYUUID }}
            # Auth Token, required.
            token: ${{ secrets.MHYTOKEN }}
+           # Server name(append os_ before server name so that asia becomes
+           # os_asia)
+           region: ${{ secrets.REGION }}
+           # Server UID
+           uid: ${{ secrets.REGIONAL_UID }}
    ```
  * Enjoy.
