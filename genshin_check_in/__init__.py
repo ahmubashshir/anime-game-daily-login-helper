@@ -21,4 +21,11 @@ def main(token=None, ac_id=None, uuid=None):
     else:
         raise RuntimeError("Failed to check in")
 
+    if len(client.other_events) > 0:
+        for event in client.other_events:
+            # pylint: disable=consider-using-f-string
+            print("::group::Event \"{name}\"".format(**event))
+            print(client.do_event(event))
+            print('::endgroup::')
+
 # vim: ft=python3:ts=4:et:
