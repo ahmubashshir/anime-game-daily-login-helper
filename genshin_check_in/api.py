@@ -112,4 +112,37 @@ class Client:
                 and date.utcnow() < date.utcfromtimestamp(event['end'])
             ]
         return self._events
+
+    @property
+    def other_events(self):
+        """ List limited events """
+        if len(self.events) > 1:
+            return self.events[1:]
+
+        return []
+
+    # pylint: disable=inconsistent-return-statements
+    def do_event(self, event):
+        """ Check-in to event """
+        # pylint: disable=import-outside-toplevel
+        from os import environ as ENV
+
+        params = event.get('params', {})
+        for key, val in params.items():
+            if val.startswith('ENV:'):
+                val = ENV.get(val[4:], None)
+                if not val:
+                    return
+                params[key] = val
+
+        data = self._call(
+            event.get('method', 'GET'),
+            event.get('url', '{id}').format(**event),
+            params=event.get('params', None),
+            json=event.get('json', None),
+        )
+
+        if event.get('success') and data:
+            return event.get('success').format(**event, **data)
+        return data
 # vim: ft=python3:ts=4:et:
