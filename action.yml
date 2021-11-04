@@ -14,6 +14,14 @@ inputs:
   token:
     description: Mihoyo Session Token
     required: true
+  region:
+    description: |
+      Server name, all lowercase, prepend os_ to
+      server name so that asia becomes os_asia
+    required: true
+  uid:
+    description: Server UID
+    required: true
 
 runs:
   using: Docker
@@ -22,5 +30,7 @@ runs:
     MHYACID: ${{ inputs.id }}
     MHYUUID: ${{ inputs.uuid }}
     MHYTOKEN: ${{ inputs.token }}
+    REGION: ${{ inputs.region }}
+    REGIONAL_UID: ${{ inputs.uid }}
 
 # vim: ft=yaml:ts=2:et:
