@@ -14,7 +14,9 @@ jobs:
     steps:
     - uses: ahmubashshir/genshin-check-in@master
       with:
-        id:    ${{ secrets.MHYACID }}
-        uuid:  ${{ secrets.MHYUUID }}
-        token: ${{ secrets.MHYTOKEN }}
+        id:     ${{ secrets.MHYACID }}
+        uid:    ${{ secrets.REGIONAL_UID }}
+        uuid:   ${{ secrets.MHYUUID }}
+        token:  ${{ secrets.MHYTOKEN }}
+        region: ${{ secrets.REGION }}
 # vim: ft=yaml:ts=2:et:
