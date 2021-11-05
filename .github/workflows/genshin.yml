@@ -15,7 +15,7 @@ jobs:
     - uses: ahmubashshir/genshin-check-in@master
       with:
         id:     ${{ secrets.MHYACID }}
-        uid:    ${{ secrets.REGIONAL_UID }}
         uuid:   ${{ secrets.MHYUUID }}
+        token:  ${{ secrets.MHYTOKEN }}
         region: ASIA
 # vim: ft=yaml:ts=2:et:
