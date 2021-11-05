@@ -1,9 +1,19 @@
 """ Mihoyo daily check-in api client """
 import re
 
+from enum import Enum
 from requests import Session as _Session
 
 URL = 'https://hk4e-api-os.mihoyo.com/event/{}'
+
+
+class Region(Enum):
+    """ MiHoYo Server regions """
+    os_asia = 'ASIA'
+    os_cht = 'HONGKONG'
+    os_usa = 'USA'
+    os_euro = 'EUROPE'
+    NONE = None
 
 
 class Client:
@@ -11,8 +21,10 @@ class Client:
     _user: dict = None
     _session: _Session = None
     _events: list = []
+    _region: Region = Region.NONE
+    _uid: int = None
 
-    def __init__(self, token: str = None, ac_id: int = None, uuid: str = None):
+    def __init__(self, token: str = None, ac_id: int = None, uuid: str = None, region=Region.NONE):
         """ Initialize API session """
         if not isinstance(token, (str,)):
             raise TypeError(
@@ -31,8 +43,12 @@ class Client:
         if not isinstance(ac_id, (int,)):
             raise TypeError(
                 f'ac_id: Expected <str>, got {type(ac_id).__name__}')
+        if not isinstance(region, (Region,)):
+            raise TypeError(
+                f'region: Expected <Region>, got {type(region).__name__}')
 
         self._session = _Session()
+        self._region = region
         self._session.cookies.update({
             'cookie_token': str(token),
             'account_id': str(ac_id),
@@ -53,11 +69,12 @@ class Client:
             'Referer': 'https://webstatic-sea.mihoyo.com/'
         })
 
-    def _call(self, method, path, *args, **kwargs):
+    def _call(self, method, url, path=True, **kwargs):
         kwargs['params'] = kwargs.get('params', {})
         kwargs['params']['lang'] = 'en-us'
-        _data = self._session.request(method, URL.format(path),
-                                      *args, **kwargs)
+        _data = self._session.request(method,
+                                      URL.format(url) if path else url,
+                                      **kwargs)
 
         if _data and _data.status_code == 200:
             _data = _data.json()
@@ -92,6 +109,25 @@ class Client:
             self._user = None
             return True
         return False
+
+    @property
+    def in_game_user_id(self):
+        """ Get in-game UID """
+        if not self._uid and self._region.name:
+            data = self._call(
+                'GET',
+                '/'.join([
+                    "https://api-os-takumi.mihoyo.com",
+                    "binding/api/getUserGameRolesByCookieToken"
+                ]),
+                path=False,
+                params={
+                    'game_biz': 'hk4e_global',
+                    'region': self._region.name
+                }
+            )
+            self._uid = next(iter(data['list'])).get('game_uid')
+        return self._uid
 
     @property
     def events(self):
@@ -129,12 +165,9 @@ class Client:
 
         params = event.get('params', {})
         for key, val in params.items():
-            if val.startswith('ENV:'):
-                val = ENV.get(val[4:], None)
-                if not val:
-                    return
-                params[key] = val
-
+            params[key] = str(val).format(**event,
+                                          UID=self.in_game_user_id,
+                                          REGION=self._region.name)
         data = self._call(
             event.get('method', 'GET'),
             event.get('url', '{id}').format(**event),

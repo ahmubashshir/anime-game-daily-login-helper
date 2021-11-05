@@ -14,8 +14,8 @@ url = '{id}/{task}'
 success = "Collected fish: {col_fish_num}"
 
 [event.params]
-uid = 'ENV:REGIONAL_UID'
-region = 'ENV:REGION'
+uid = '{UID}'
+region = '{REGION}'
 [event.json]
 fir = 0
 
