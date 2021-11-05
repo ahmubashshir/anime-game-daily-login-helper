@@ -1,10 +1,10 @@
 """ Genshin Web Event Check-in bot """
 from os import environ as _ENV
 
-from .api import Client as _Client
+from .api import Client as _Client, Region as _Region
 
 
-def main(token=None, ac_id=None, uuid=None):
+def main(token=None, ac_id=None, uuid=None, region=None):
     """ The Main Method """
     if not token:
         token = _ENV['MHYTOKEN']
@@ -12,7 +12,9 @@ def main(token=None, ac_id=None, uuid=None):
         ac_id = int(_ENV['MHYACID'])
     if not uuid:
         uuid = _ENV['MHYUUID']
-    client = _Client(token, ac_id, uuid)
+    if not region:
+        region = _Region(_ENV['REGION'])
+    client = _Client(token, ac_id, uuid, region=region)
 
     if not client.checked_in and client.check_in():
         print(f'Checked in: {client.days} days streak')
