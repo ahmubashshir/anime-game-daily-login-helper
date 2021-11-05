@@ -17,6 +17,5 @@ jobs:
         id:     ${{ secrets.MHYACID }}
         uid:    ${{ secrets.REGIONAL_UID }}
         uuid:   ${{ secrets.MHYUUID }}
-        token:  ${{ secrets.MHYTOKEN }}
-        region: ${{ secrets.REGION }}
+        region: ASIA
 # vim: ft=yaml:ts=2:et:
