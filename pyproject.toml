@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "genshin-check-in"
+name = "hoyolab-check-in"
 version = "0.3.2"
-description = "Automatically check-in to Genshin Impact monthly check-in web event"
+description = "Automatically check-in to Hoyolab Games monthly check-in web event"
 authors = ["Mubashshir <ahmubashshir@gmail.com>"]
 license = "GPL3"
 
@@ -11,7 +11,7 @@ requests = "^2.26.0"
 toml = "^0.10.2"
 
 [tool.poetry.scripts]
-genshin = "genshin_check_in.__main__:main"
+hoyolab = "hoyolab_check_in:main"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

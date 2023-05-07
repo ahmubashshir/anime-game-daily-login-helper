@@ -1,0 +1,20 @@
+[GENSHIN]
+name = 'Genshin Impact'
+domain = 'hk4e'
+base = 'sol'
+id = "e202102251931481"
+
+[HONKAI]
+name = 'Honkai Impact 3rd'
+domain = 'public'
+base = 'mani'
+id = 'e202110291205111'
+makeup_tasks = false
+
+[STARRAIL]
+name = 'Honkai: Star Rail'
+domain = 'public'
+base = 'luna/os'
+id = 'e202303301540311'
+
+# vim: ft=toml:ts=4:et:

@@ -10,9 +10,15 @@ Setup this repo, then forget the hassle of checking in to Genshin Daily Web Even
      * `account_id`
      * `cookie_token`
  * Set cookies in `Repo Settings > Secrets`
-   * `_MHYUUID`     -> `MHYUUID`
-   * `account_id`   -> `MHYACID`
-   * `cookie_token` -> `MHYTOKEN`
+   * `_MHYUUID`     -> `UUID`
+   * `account_id`   -> `ACCOUNT`
+   * `cookie_token` -> `TOKEN`
+ * Enable check ins for the game you want:
+   * `GAMES` -> `:` separated `list`, like `$PATH`
+   * Values:
+     * `GenshinImpact`
+     * `HonkaiImpact3`
+     * `HonkaiStarRail`
  * Create a github action
    ```yaml
    # Can be anything you want
