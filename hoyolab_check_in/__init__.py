@@ -33,9 +33,9 @@ def main():
         check_in = CheckIn(game, session)
         if not check_in.done and check_in.now() or check_in.done:
             check_in.reset()
-            print(f'{check_in.name: >17}: {check_in.days: >2} days streak')
+            print(f'{check_in.name:>17s}: {check_in.days:>2d} days streak')
         else:
-            print(f'{check_in.name: >17}: Failed to check in')
+            print(f'{check_in.name:>17s}: Failed to check in')
 
         if not check_in.supports_makeup:
             continue
@@ -44,12 +44,12 @@ def main():
             for task, done in check_in.makeup_tasks.items():
                 if not done:
                     if check_in.makeup_claim(task):
-                        print(f'{check_in.name: >17}: Claimed make up token')
+                        print(f'{check_in.name:>17s}: Claimed make up token')
 
         if check_in.can_makeup:
             if check_in.makeup():
                 check_in.reset()
-                print(f'{check_in.name: >17}: Made up 1 missed check in')
-                print(f'{check_in.name: >17}: {check_in.days: >2} days streak')
+                print(f'{check_in.name:>17s}: Made up 1 missed check in')
+                print(f'{check_in.name:>17s}: {check_in.days:>2d} days streak')
 
 # vim: ft=python3:ts=4:et:
