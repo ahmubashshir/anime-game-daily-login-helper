@@ -27,7 +27,7 @@ class Games(Enum):
 
 
 class Session(__Session):
-    URL = 'https://sg-{domain}-api.hoyolab.com/event/{base}/{{}}'
+    URL = 'https://sg-{domain}-api.hoyolab.com/{root}/{base}/{{}}'
 
     def __init__(self, token: str, acid: int, uuid: str, **kwargs):
         if not isinstance(token, (str,)):
@@ -62,9 +62,9 @@ class Session(__Session):
             'Cache-Control': 'no-cache',
             'Sec-Fetch-Site': 'same-site',
             'Accept-Language': 'en-US,en;q=0.5',
-            'Origin': 'https://webstatic-sea.hoyolab.com',
+            'Origin': 'https://act.hoyolab.com',
             'Accept': 'application/json, text/plain, */*',
-            'Referer': 'https://webstatic-sea.hoyolab.com/'
+            'Referer': 'https://act.hoyolab.com/'
         })
 
     def get(self, game, path, data={}, *args, **kwargs):
@@ -72,6 +72,17 @@ class Session(__Session):
 
     def post(self, game, path, data={}, *args, **kwargs):
         return self.ask('POST', game, path, json=data, *args, **kwargs)
+
+    def test(self):
+        url = self.URL.replace('hoyolab', 'hoyoverse').format(
+            domain='public-data',
+            root='device-fp',
+            base='api'
+        ).format('getFp')
+        return self.request('OPTIONS', url, headers={
+            'Access-Control-Request-Method': 'POST',
+            'Access-Control-Request-Headers': 'content-type'
+        })
 
     def ask(self, method, game, path, **kwargs):
         data = {}
@@ -87,7 +98,7 @@ class Session(__Session):
             'act_id': game['id']
         })
 
-        url = self.URL.format(**game).format(path)
+        url = self.URL.format(root='event', **game).format(path)
         _data = self.request(method, url, **kwargs)
         if _data and _data.status_code == 200:
             _data = _data.json()
@@ -152,13 +163,14 @@ class CheckIn(metaclass=__CheckInMetaClass):
         def get(x): return self.__user_makeup.get(x)
         def alt(x, y): return self.__user_makeup.get(x, y)
         return all([
-            get('resign_cnt_daily') <= get('resign_limit_daily'),
-            get('resign_cnt_monthly') <= get('resign_limit_monthly'),
-            get('sign_cnt_missed') - alt('sign_days', get('sign_cnt')) > 0
+            get('resign_cnt_daily') < get('resign_limit_daily'),
+            get('resign_cnt_monthly') < get('resign_limit_monthly'),
+            get('sign_cnt_missed') > 0
         ])
 
     def makeup(self):
         data = self.__session.post(self.__game, 'resign')
+        return bool(data and data['message'] == '')
 
     @property
     def user(self):
@@ -174,6 +186,7 @@ class CheckIn(metaclass=__CheckInMetaClass):
 
     @property
     def name(self):
+        """ Get game name """
         return self.__game.get('name')
 
     @property
@@ -184,9 +197,6 @@ class CheckIn(metaclass=__CheckInMetaClass):
     def now(self):
         """ Check-in now """
         data = self.__session.post(self.__game, 'sign')
-
-        if data and data['code'] == 'ok':
-            return True
-        return False
+        return bool(data and data['code'] == 'ok')
 
 # vim: ft=python3:ts=4:et:
