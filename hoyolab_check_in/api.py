@@ -1,7 +1,8 @@
 """ Mihoyo daily check-in api client """
 import re
 from enum import Enum
-
+from time import sleep
+from random import randrange
 from requests import Session as __Session
 
 
@@ -103,6 +104,7 @@ class Session(__Session):
         if _data and _data.status_code == 200:
             _data = _data.json()
         if _data['retcode'] == 0:
+            sleep(randrange(1, 4))
             return _data['data']
         return None
 
