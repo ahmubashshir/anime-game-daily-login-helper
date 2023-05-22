@@ -1,32 +1,26 @@
-name: 'Genshin Impact Daily Check-in Web Event'
-description: 'Check-in to Genshin Impact web event daily'
+name: 'An Anime Game Daily Check-in Web Event'
+description: 'Check-in to An Anime Game check-in event daily'
 branding:
   icon: 'clock'
   color: 'gray-dark'
 
 inputs:
   id:
-    description: Mihoyo User ID
+    description: User ID
     required: true
   uuid:
-    description: Mihoyo User UUID
+    description: User UUID
     required: true
   token:
-    description: Mihoyo Session Token
-    required: true
-  region:
-    description: |
-      Server name, ENUM.
-      Allowed Values: ASIA, EUROPE, HONGKONG, USA
+    description: Session Token
     required: true
 
 runs:
   using: Docker
-  image: docker://ghcr.io/ahmubashshir/genshin-check-in:latest
+  image: docker://ghcr.io/ahmubashshir/an-anime-game-check-in:latest
   env:
     MHYACID: ${{ inputs.id }}
     MHYUUID: ${{ inputs.uuid }}
     MHYTOKEN: ${{ inputs.token }}
-    REGION: ${{ inputs.region }}
 
 # vim: ft=yaml:ts=2:et:

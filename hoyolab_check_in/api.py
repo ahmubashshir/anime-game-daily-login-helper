@@ -1,9 +1,15 @@
-""" Mihoyo daily check-in api client """
+""" An Anime Game daily check-in api client """
 import re
 from enum import Enum
 from time import sleep
 from random import randrange
 from requests import Session as __Session
+
+
+def __b64d__(arg):
+    """ Decode Base64 """
+    from base64 import standard_b64decode as b64decode
+    return b64decode(arg.encode()).decode() if isinstance(arg, (str,)) else arg
 
 
 class __CheckInMetaClass(type):
@@ -12,23 +18,29 @@ class __CheckInMetaClass(type):
     @property
     def _CheckIn__data(cls):
         if not cls.__data:
-            import toml
+            from toml import load as load_toml
             from datetime import datetime as date
             from os import path
-
-            with open(path.join(path.dirname(__file__), 'games.toml'), encoding="utf8") as file:
-                cls.__data = toml.load(file)
+            file = path.join(path.dirname(__file__), 'games.toml')
+            with open(file, encoding="utf8") as file:
+                data = load_toml(file)
+                cls.__data = {}
+                for game, info in data.items():
+                    cls.__data[game] = {}
+                    for key, val in info.items():
+                        cls.__data[game][key] = __b64d__(val)
         return cls.__data
 
 
 class Games(Enum):
-    GENSHIN = 'GenshinImpact'
-    HONKAI = 'HonkaiImpact3'
-    STARRAIL = 'HonkaiStarRail'
+    KENJIN = 'KenJin'
+    BOUGAI = 'BouGai3'
+    SUTAAREIRU = 'SutaaReiru'
 
 
 class Session(__Session):
-    URL = 'https://sg-{domain}-api.hoyolab.com/{root}/{base}/{{}}'
+    URL = __b64d__(
+        'aHR0cHM6Ly9zZy17ZG9tYWlufS1hcGkuaG95b2xhYi5jb20ve3Jvb3R9L3tiYXNlfS97e319')
 
     def __init__(self, token: str, acid: int, uuid: str, **kwargs):
         if not isinstance(token, (str,)):
@@ -63,9 +75,9 @@ class Session(__Session):
             'Cache-Control': 'no-cache',
             'Sec-Fetch-Site': 'same-site',
             'Accept-Language': 'en-US,en;q=0.5',
-            'Origin': 'https://act.hoyolab.com',
+            'Origin': __b64d__('aHR0cHM6Ly9hY3QuaG95b2xhYi5jb20='),
             'Accept': 'application/json, text/plain, */*',
-            'Referer': 'https://act.hoyolab.com/'
+            'Referer': __b64d__('aHR0cHM6Ly9hY3QuaG95b2xhYi5jb20v')
         })
 
     def get(self, game, path, data={}, *args, **kwargs):
@@ -75,7 +87,7 @@ class Session(__Session):
         return self.ask('POST', game, path, json=data, *args, **kwargs)
 
     def test(self):
-        url = self.URL.replace('hoyolab', 'hoyoverse').format(
+        url = self.URL.replace(__b64d__('aG95b2xhYg=='), __b64d__('aG95b3ZlcnNl')).format(
             domain='public-data',
             root='device-fp',
             base='api'
@@ -85,7 +97,11 @@ class Session(__Session):
             'Access-Control-Request-Headers': 'content-type'
         })
 
-    def ask(self, method, game, path, **kwargs):
+    def redeem(self, game, code):
+        pass
+        self.ask('GET', game, '')
+
+    def ask(self, method, game, path, root='event', **kwargs):
         data = {}
         if 'params' in kwargs:
             data = kwargs.get('params')
@@ -99,7 +115,7 @@ class Session(__Session):
             'act_id': game['id']
         })
 
-        url = self.URL.format(root='event', **game).format(path)
+        url = self.URL.format(root=root, **game).format(path)
         _data = self.request(method, url, **kwargs)
         if _data and _data.status_code == 200:
             _data = _data.json()
@@ -110,7 +126,7 @@ class Session(__Session):
 
 
 class CheckIn(metaclass=__CheckInMetaClass):
-    """ Mihoyo API client """
+    """ A Certain Anime Game Web Event API client """
 
     __user: dict = None
     __user_makeup: dict = None

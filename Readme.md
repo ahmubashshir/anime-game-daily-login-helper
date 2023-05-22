@@ -1,10 +1,10 @@
-# GitHub action for checking in on Genshin Web Event
+# GitHub action for checking in on an Anime Game Daily Web Event
 
-Setup this repo, then forget the hassle of checking in to Genshin Daily Web Event manually.
+Setup this repo, then forget the hassle of checking in to an Anime Game Daily Check-in Web Event manually.
 
 
 ### Setup Instruction
- * Extract Cookies from [event page](https://webstatic-sea.mihoyo.com/ys/event/signin-sea/index.html?act_id=e202102251931481 "Event Page") using `Network` tab of `Developer Tools`
+ * Extract Cookies from the Daily login event page using `Network` tab of `Developer Tools`
   * Required Cookies:
      * `_MHYUUID`
      * `account_id`
@@ -16,13 +16,13 @@ Setup this repo, then forget the hassle of checking in to Genshin Daily Web Even
  * Enable check ins for the game you want:
    * `GAMES` -> `:` separated `list`, like `$PATH`
    * Values:
-     * `GenshinImpact`
-     * `HonkaiImpact3`
-     * `HonkaiStarRail`
+     * `KenJin`  (Toggle rendaku on け & じ (けんじん))
+     * `BouGai3` (Toggle rendaku on ぼ & が (ぼうがい))
+     * `SutaaReiru` (Romaji of japanese :3)
  * Create a github action
    ```yaml
    # Can be anything you want
-   name: Genshin check-in
+   name: A certain anime game check-in
 
    on:
      # Allow manual start
@@ -30,22 +30,19 @@ Setup this repo, then forget the hassle of checking in to Genshin Daily Web Even
      # Run job on 16:15UTC/00:15CST daily
      schedule:
      - cron: "15 16 * * *"
-
+   # this got flagged by github.
    jobs:
      # check-in now
      check-in:
        runs-on: ubuntu-latest
        steps:
-       - uses: ahmubashshir/genshin-check-in@master
+       - uses: ahmubashshir/anime-game-check-in@master
          with:
-           # MiHoYo Account ID, required.
+           # Account ID, required.
            id:    ${{ secrets.MHYACID }}
-           # MiHoYo UUID, required.
+           # UUID, required.
            uuid:  ${{ secrets.MHYUUID }}
            # Auth Token, required.
            token: ${{ secrets.MHYTOKEN }}
-           #   Server name, ENUM.
-           #   Allowed Values: ASIA, EUROPE, HONGKONG, USA
-           region: ASIA
    ```
  * Enjoy.

@@ -1,4 +1,4 @@
-""" Genshin Web Event Check-in bot """
+""" An Anime Game Web Event Check-in bot """
 from sys import exit
 from os import environ as _ENV
 from argparse import ArgumentParser

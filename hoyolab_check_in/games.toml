@@ -1,20 +1,18 @@
-[GENSHIN]
-name = 'Genshin Impact'
-domain = 'hk4e'
-base = 'sol'
-id = "e202102251931481"
+[KENJIN]
+name = "R2Vuc2hpbiBJbXBhY3Q="
+domain = "aGs0ZQ=="
+base = "c29s"
+id = "ZTIwMjEwMjI1MTkzMTQ4MQ=="
 
-[HONKAI]
-name = 'Honkai Impact 3rd'
-domain = 'public'
-base = 'mani'
-id = 'e202110291205111'
+[BOUGAI]
+name = "SG9ua2FpIEltcGFjdCAzcmQ="
+domain = "cHVibGlj"
+base = "bWFuaQ=="
+id = "ZTIwMjExMDI5MTIwNTExMQ=="
 makeup_tasks = false
 
-[STARRAIL]
-name = 'Honkai: Star Rail'
-domain = 'public'
-base = 'luna/os'
-id = 'e202303301540311'
-
-# vim: ft=toml:ts=4:et:
+[SUTAAREIRU]
+name = "SG9ua2FpOiBTdGFyIFJhaWw="
+domain = "cHVibGlj"
+base = "bHVuYS9vcw=="
+id = "ZTIwMjMwMzMwMTU0MDMxMQ=="
