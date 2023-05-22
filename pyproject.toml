@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "hoyolab-check-in"
-version = "0.3.2"
-description = "Automatically check-in to Hoyolab Games monthly check-in web event"
+name = "an-anime-game-check-in"
+version = "0.4"
+description = "Automatically check-in to All of the Anime Games monthly check-in web event"
 authors = ["Mubashshir <ahmubashshir@gmail.com>"]
 license = "GPL3"
 
@@ -11,7 +11,7 @@ requests = "^2.26.0"
 toml = "^0.10.2"
 
 [tool.poetry.scripts]
-hoyolab = "hoyolab_check_in:main"
+"an-anime-game-check-in" = "an_anime_game_check_in:main"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

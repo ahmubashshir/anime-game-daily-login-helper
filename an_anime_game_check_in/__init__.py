@@ -65,6 +65,6 @@ def main():
                 print(f'{check_in.name:>17s}: Failed to make up missed check in')
                 statuses[game] = False
 
-    exit(0 if all(statuses.values()) else 1)
+    return (0 if all(statuses.values()) else 1)
 
 # vim: ft=python3:ts=4:et:
