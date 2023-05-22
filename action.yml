@@ -14,14 +14,17 @@ inputs:
   token:
     description: Session Token
     required: true
+  games:
+    description: "CheckIn enabled games ( `:` separated list)"
+    required: true
 
 runs:
   using: Docker
-  image: docker://ghcr.io/ahmubashshir/an-anime-game-check-in:latest
+  image: docker://codeberg.org/ahmubashshir/anime-game-daily-login-helper:latest
   env:
     ACCOUNT: ${{ inputs.id }}
     UUID: ${{ inputs.uuid }}
     TOKEN: ${{ inputs.token }}
-    GAMES: ${{ join(inputs.games, ':') }}
+    GAMES: ${{ inputs.games }}
 
 # vim: ft=yaml:ts=2:et:
