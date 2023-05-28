@@ -12,6 +12,11 @@ def __b64d__(arg):
     return b64decode(arg.encode()).decode() if isinstance(arg, (str,)) else arg
 
 
+def __b64e__(arg):
+    from base64 import standard_b64encode as b64encode
+    return b64encode(arg.encode()).decode() if isinstance(arg, (str,)) else arg
+
+
 class __CheckInMetaClass(type):
     __data: dict = None
 
@@ -42,10 +47,13 @@ class Session(__Session):
     URL = __b64d__(
         'aHR0cHM6Ly9zZy17ZG9tYWlufS1hcGkuaG95b2xhYi5jb20ve3Jvb3R9L3tiYXNlfS97e319')
 
-    def __init__(self, token: str, acid: int, uuid: str, **kwargs):
+    def __init__(self, token: str, login: str, acid: int, uuid: str, **kwargs):
         if not isinstance(token, (str,)):
             raise TypeError(
                 f'token: Expected <str>, got {type(token).__name__}')
+        if not isinstance(login, (str,)):
+            raise TypeError(
+                f'token: Expected <str>, got {type(login).__name__}')
         if not isinstance(uuid, (str,)):
             raise TypeError(
                 f'uuid: Expected <str>, got {type(uuid).__name__}')
@@ -55,14 +63,18 @@ class Session(__Session):
 
         if not re.match(r'^[0-9a-zA-Z]+$', token):
             raise ValueError(f'token: Invalid token "{token}"')
+        if not re.match(r'^[0-9a-zA-Z]+$', login):
+            raise ValueError(f'token: Invalid login token "{login}"')
         if not re.match(r'^[0-9a-z]{8}(-[0-9a-z]{4}){3}-[0-9a-z]{12}$', uuid):
             raise ValueError(f'uuid: Invalid UUID "{uuid}"')
 
         super().__init__()
         self.cookies.update({
             'cookie_token': str(token),
-            'account_id': str(acid),
-            '_MHYUUID': str(uuid),
+            'account_id':   str(acid),
+            'ltuid':        str(acid),
+            'ltoken':       str(login),
+            '_MHYUUID':     str(uuid),
             'mi18nLang': 'en-us'
         })
         self.cookies.update(kwargs)
@@ -75,6 +87,8 @@ class Session(__Session):
             'Cache-Control': 'no-cache',
             'Sec-Fetch-Site': 'same-site',
             'Accept-Language': 'en-US,en;q=0.5',
+            'x-rpc-device_id': str(uuid),
+            'x-rpc-lang': 'en',
             'Origin': __b64d__('aHR0cHM6Ly9hY3QuaG95b2xhYi5jb20='),
             'Accept': 'application/json, text/plain, */*',
             'Referer': __b64d__('aHR0cHM6Ly9hY3QuaG95b2xhYi5jb20v')
@@ -87,15 +101,16 @@ class Session(__Session):
         return self.ask('POST', game, path, json=data, *args, **kwargs)
 
     def test(self):
-        url = self.URL.replace(__b64d__('aG95b2xhYg=='), __b64d__('aG95b3ZlcnNl')).format(
-            domain='public-data',
-            root='device-fp',
-            base='api'
-        ).format('getFp')
-        return self.request('OPTIONS', url, headers={
-            'Access-Control-Request-Method': 'POST',
-            'Access-Control-Request-Headers': 'content-type'
+        url = self.URL.replace(__b64d__("c2cte2RvbWFpbn0tYXBp"), __b64d__("YXBpLWFjY291bnQtb3M=")).format(
+            root='auth', base='api'
+        ).format(__b64d__("Z2V0VXNlckFjY291bnRJbmZvQnlMVG9rZW4="))
+        from time import time as epoch_now
+        rsp = self.request('GET', url, params={
+            't': int(epoch_now())
         })
+        if rsp.ok and rsp.headers.get('Content-Type', 'text/plain') == 'application/json':
+            rsp = rsp.json()
+        return rsp['data'] if rsp['message'] == 'OK' else None
 
     def redeem(self, game, code):
         pass
@@ -195,7 +210,7 @@ class CheckIn(metaclass=__CheckInMetaClass):
         """ User Info """
         if not self.__user:
             self.__user = self.__session.get(self.__game, 'info')
-        return self.__user
+        return self.__user or {}
 
     @property
     def done(self):

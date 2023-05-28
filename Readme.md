@@ -9,10 +9,12 @@ Setup this repo, then forget the hassle of checking in to an Anime Game Daily Ch
      * `_MHYUUID`
      * `account_id`
      * `cookie_token`
+     * `ltoken`
  * Set cookies in `Repo Settings > Secrets`
    * `_MHYUUID`     -> `UUID`
    * `account_id`   -> `ACCOUNT`
    * `cookie_token` -> `TOKEN`
+   * `ltoken`       -> `LOGIN`
  * Enable check ins for the game you want:
    * `GAMES` -> `:` separated `list`, like `$PATH`
    * Values:
@@ -44,6 +46,7 @@ Setup this repo, then forget the hassle of checking in to an Anime Game Daily Ch
            uuid:  ${{ secrets.UUID }}
            # Auth Token, required.
            token: ${{ secrets.TOKEN }}
+           login: ${{ secrets.LOGIN }}
            games:
            - KenJin
            - BouGai3

@@ -14,6 +14,9 @@ inputs:
   token:
     description: Session Token
     required: true
+  login:
+    description: Login Token
+    required: true
   games:
     description: "CheckIn enabled games ( `:` separated list)"
     required: true
@@ -26,5 +29,6 @@ runs:
     UUID: ${{ inputs.uuid }}
     TOKEN: ${{ inputs.token }}
     GAMES: ${{ inputs.games }}
+    LOGIN: ${{ inputs.login }}
 
 # vim: ft=yaml:ts=2:et:
