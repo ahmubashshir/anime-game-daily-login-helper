@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "an-anime-game-check-in"
-version = "0.1"
+version = "0.3"
 description = "Automatically check-in to All of the Anime Games monthly check-in web event"
 authors = ["Mubashshir <ahmubashshir@gmail.com>"]
 license = "GPL3"
