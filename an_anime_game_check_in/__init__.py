@@ -55,7 +55,7 @@ Logged in Successfully as
             print(f'{check_in.name:>17s}: Failed to check in')
             statuses[game] = False
 
-        if not check_in.supports_makeup:
+        if not check_in.supports_makeup or check_in.missed == 0:
             continue
 
         if len(check_in.makeup_tasks) > 0 and not all(check_in.makeup_tasks.values()):

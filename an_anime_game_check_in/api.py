@@ -189,17 +189,24 @@ class CheckIn(metaclass=__CheckInMetaClass):
         return ask('task/complete') and ask('task/award')
 
     @property
-    def can_makeup(self):
+    def __makeup_info(self):
         if not self.__user_makeup:
             self.__user_makeup = self.__session.get(self.__game, 'resign_info')
+        return self.__user_makeup or {}
 
-        def get(x): return self.__user_makeup.get(x)
-        def alt(x, y): return self.__user_makeup.get(x, y)
+    @property
+    def can_makeup(self):
+        def get(x): return self.__makeup_info.get(x)
+        def alt(x, y): return self.__makeup_info.get(x, y)
         return all([
             get('resign_cnt_daily') < get('resign_limit_daily'),
             get('resign_cnt_monthly') < get('resign_limit_monthly'),
             get('sign_cnt_missed') > 0
         ])
+
+    @property
+    def missed(self):
+        return self.__makeup_info.get('sign_cnt_missed', 0)
 
     def makeup(self):
         data = self.__session.post(self.__game, 'resign')
