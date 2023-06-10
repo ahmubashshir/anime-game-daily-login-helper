@@ -136,7 +136,7 @@ class Session(__Session):
             _data = _data.json()
         if _data['retcode'] == 0:
             sleep(randrange(1, 4))
-            return _data['data']
+            return _data['data'] or _data['retcode'] == 0
         return None
 
 
