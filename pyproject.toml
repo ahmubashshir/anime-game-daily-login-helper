@@ -9,6 +9,7 @@ license = "GPL3"
 python = "^3.6"
 requests = "^2.26.0"
 toml = "^0.10.2"
+2captcha-python = "^1.2.1"
 
 [tool.poetry.scripts]
 "an-anime-game-check-in" = "an_anime_game_check_in:main"
