@@ -6,7 +6,7 @@ authors = ["Mubashshir <ahmubashshir@gmail.com>"]
 license = "GPL3"
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = ">=3.7"
 requests = "^2.26.0"
 toml = "^0.10.2"
 2captcha-python = "^1.2.1"
