@@ -4,17 +4,7 @@ from enum import Enum
 from time import sleep
 from random import randrange
 from requests import Session as __Session
-
-
-def __b64d__(arg):
-    """ Decode Base64 """
-    from base64 import standard_b64decode as b64decode
-    return b64decode(arg.encode()).decode() if isinstance(arg, (str,)) else arg
-
-
-def __b64e__(arg):
-    from base64 import standard_b64encode as b64encode
-    return b64encode(arg.encode()).decode() if isinstance(arg, (str,)) else arg
+from . import strings
 
 
 class __CheckInMetaClass(type):
@@ -26,6 +16,8 @@ class __CheckInMetaClass(type):
             from toml import load as load_toml
             from datetime import datetime as date
             from os import path
+            from base64 import standard_b64decode as b64decode
+
             file = path.join(path.dirname(__file__), 'games.toml')
             with open(file, encoding="utf8") as file:
                 data = load_toml(file)
@@ -33,7 +25,9 @@ class __CheckInMetaClass(type):
                 for game, info in data.items():
                     cls.__data[game] = {}
                     for key, val in info.items():
-                        cls.__data[game][key] = __b64d__(val)
+                        cls.__data[game][key] = (lambda x:
+                                                 b64decode(x.encode()).decode()
+                                                 if isinstance(x, (str,)) else x)(val)
         return cls.__data
 
 
@@ -44,9 +38,6 @@ class Games(Enum):
 
 
 class Session(__Session):
-    URL = __b64d__(
-        'aHR0cHM6Ly9zZy17ZG9tYWlufS1hcGkuaG95b2xhYi5jb20ve3Jvb3R9L3tiYXNlfS97e319')
-
     def __init__(self, token: str, login: str, acid: int, uuid: str, **kwargs):
         if not isinstance(token, (str,)):
             raise TypeError(
@@ -70,16 +61,15 @@ class Session(__Session):
 
         super().__init__()
         self.cookies.update({
-            'cookie_token': str(token),
-            'account_id':   str(acid),
-            'ltuid':        str(acid),
-            'ltoken':       str(login),
-            '_MHYUUID':     str(uuid),
-            'mi18nLang': 'en-us'
+            strings.cn_tkn: str(token),
+            strings.cn_aid: str(acid),
+            strings.cn_uid: str(acid),
+            strings.cn_ltk: str(login),
+            strings.cn_gid: str(uuid),
+            strings.cn_lng: 'en-us'
         })
         self.cookies.update(kwargs)
         self.headers.update({
-            'DNT': '1',
             'Sec-GPC': '1',
             'Pragma': 'no-cache',
             'Sec-Fetch-Mode': 'cors',
@@ -87,11 +77,11 @@ class Session(__Session):
             'Cache-Control': 'no-cache',
             'Sec-Fetch-Site': 'same-site',
             'Accept-Language': 'en-US,en;q=0.5',
-            'x-rpc-device_id': str(uuid),
-            'x-rpc-lang': 'en',
-            'Origin': __b64d__('aHR0cHM6Ly9hY3QuaG95b2xhYi5jb20='),
+            strings.h_rpc_n: str(uuid),
+            strings.h_rpc_lng_n: 'en',
+            'Origin': strings.origin_url_v,
             'Accept': 'application/json, text/plain, */*',
-            'Referer': __b64d__('aHR0cHM6Ly9hY3QuaG95b2xhYi5jb20v')
+            'Referer': strings.referer_v
         })
 
     def get(self, game, path, data={}, *args, **kwargs):
@@ -101,9 +91,11 @@ class Session(__Session):
         return self.ask('POST', game, path, json=data, *args, **kwargs)
 
     def test(self):
-        url = self.URL.replace(__b64d__("c2cte2RvbWFpbn0tYXBp"), __b64d__("YXBpLWFjY291bnQtb3M=")).format(
-            root='auth', base='api'
-        ).format(__b64d__("Z2V0VXNlckFjY291bnRJbmZvQnlMVG9rZW4="))
+        url = strings.url\
+            .replace(strings.game_frg, strings.auth_frg)\
+            .format(root='auth', base='api')\
+            .format(strings.auth_prm)
+
         from time import time as epoch_now
         rsp = self.request('GET', url, params={
             't': int(epoch_now())
@@ -130,7 +122,7 @@ class Session(__Session):
             'act_id': game['id']
         })
 
-        url = self.URL.format(root=root, **game).format(path)
+        url = strings.url.format(root=root, **game).format(path)
         _data = self.request(method, url, **kwargs)
         if _data and _data.status_code == 200:
             _data = _data.json()
