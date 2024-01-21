@@ -4,6 +4,7 @@ from os import environ as _ENV
 from argparse import ArgumentParser
 
 from .api import Games, CheckIn, Session
+from .util import try_check_in
 
 
 def main():
@@ -45,32 +46,31 @@ Logged in Successfully as
     statuses = {}
 
     for game in games:
-        check_in = CheckIn(game, session)
+        client = CheckIn(game, session)
         statuses[game] = True
 
-        if check_in.done or not check_in.done and check_in.now():
-            check_in.reset()
-            print(f'{check_in.name:>17s}: {check_in.days:>2d} days streak')
+        if try_check_in(client, 3):
+            print(f'{client.name:>17s}: {client.days:>2d} days streak')
         else:
-            print(f'{check_in.name:>17s}: Failed to check in')
+            print(f'{client.name:>17s}: Failed to check in')
             statuses[game] = False
 
-        if not check_in.supports_makeup or check_in.missed == 0:
+        if not client.supports_makeup or client.missed == 0:
             continue
 
-        if len(check_in.makeup_tasks) > 0 and not all(check_in.makeup_tasks.values()):
-            for task, done in check_in.makeup_tasks.items():
+        if len(client.makeup_tasks) > 0 and not all(client.makeup_tasks.values()):
+            for task, done in client.makeup_tasks.items():
                 if not done:
-                    if check_in.makeup_claim(task):
-                        print(f'{check_in.name:>17s}: Claimed make up token')
+                    if client.makeup_claim(task):
+                        print(f'{client.name:>17s}: Claimed make up token')
 
-        if check_in.can_makeup:
-            if check_in.makeup():
-                check_in.reset()
-                print(f'{check_in.name:>17s}: Made up 1 missed check in')
-                print(f'{check_in.name:>17s}: {check_in.days:>2d} days streak')
+        if client.can_makeup:
+            if client.makeup():
+                client.reset()
+                print(f'{client.name:>17s}: Made up 1 missed check in')
+                print(f'{client.name:>17s}: {client.days:>2d} days streak')
             else:
-                print(f'{check_in.name:>17s}: Failed to make up missed check in')
+                print(f'{client.name:>17s}: Failed to make up missed check in')
                 statuses[game] = False
 
     return (0 if all(statuses.values()) else 1)
