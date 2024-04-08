@@ -13,15 +13,18 @@ def main():
     parser = ArgumentParser()
     parser.add_argument("-i", "--id", type=int, help="Set User ID")
     parser.add_argument("-t", "--token", type=str, help="Set Token")
+    parser.add_argument("-c", "--cookie", type=str, help="Set Cookie Token")
     parser.add_argument("-l", "--login", type=str, help="Set Log-in Token")
     parser.add_argument("-u", "--uuid", type=str, help="Set UUID")
     parser.add_argument("-g", "--games", nargs='+', type=Games,
                         help="Set Server Region")
     args = parser.parse_args()
-    ac_id, token, login, uuid, games = args.id, args.token, args.login, args.uuid, args.games
+    ac_id, token, cookie, login, uuid, games = args.id, args.token, args.cookie, args.login, args.uuid, args.games
 
     if not token:
         token = _ENV['TOKEN']
+    if not cookie:
+        cookie = _ENV['COOKIE']
     if not login:
         login = _ENV['LOGIN']
     if not ac_id:
@@ -31,7 +34,7 @@ def main():
     if not games:
         games = [Games(game.strip()) for game in _ENV['GAMES'].split(':')]
 
-    session = Session(token, login, ac_id, uuid)
+    session = Session(token, cookie, login, ac_id, uuid)
     try:
         info = session.test()
         print("""

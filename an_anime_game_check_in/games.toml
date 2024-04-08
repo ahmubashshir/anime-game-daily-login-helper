@@ -11,7 +11,8 @@ base = "bWFuaQ=="
 id = "ZTIwMjExMDI5MTIwNTExMQ=="
 makeup_tasks = false
 
-[SUTAAREIRU]
+[HOSHIRESSHA]
+region = 'prod_official_{region}'
 name = "SG9ua2FpOiBTdGFyIFJhaWw="
 domain = "cHVibGlj"
 base = "bHVuYS9vcw=="

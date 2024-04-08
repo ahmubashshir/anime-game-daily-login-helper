@@ -4,44 +4,52 @@ from enum import Enum
 from time import sleep
 from random import randrange
 from requests import Session as __Session
+from binascii import Error as BAError
 from . import strings
 
 
-class __CheckInMetaClass(type):
+class __DataLoader(type):
     __data: dict = None
 
     @property
-    def _CheckIn__data(cls):
+    def data(cls):
         if not cls.__data:
             from toml import load as load_toml
             from datetime import datetime as date
             from os import path
             from base64 import standard_b64decode as b64decode
 
-            file = path.join(path.dirname(__file__), 'games.toml')
+            file = path.join(path.dirname(__file__), f'{cls.__data__}.toml')
             with open(file, encoding="utf8") as file:
                 data = load_toml(file)
                 cls.__data = {}
                 for game, info in data.items():
                     cls.__data[game] = {}
                     for key, val in info.items():
-                        cls.__data[game][key] = (lambda x:
-                                                 b64decode(x.encode()).decode()
-                                                 if isinstance(x, (str,)) else x)(val)
+                        try:
+                            cls.__data[game][key] = (lambda x:
+                                                     b64decode(
+                                                         x.encode()).decode()
+                                                     if isinstance(x, (str,)) else x)(val)
+                        except (UnicodeDecodeError, BAError):
+                            cls.__data[game][key] = val
         return cls.__data
 
 
 class Games(Enum):
     KENJIN = 'KenJin'
     BOUGAI = 'BouGai3'
-    SUTAAREIRU = 'SutaaReiru'
+    HOSHIRESSHA = 'HoshiRessha'
 
 
 class Session(__Session):
-    def __init__(self, token: str, login: str, acid: int, uuid: str, **kwargs):
+    def __init__(self, token: str, cookie: str, login: str, acid: int, uuid: str, **kwargs):
         if not isinstance(token, (str,)):
             raise TypeError(
                 f'token: Expected <str>, got {type(token).__name__}')
+        if not isinstance(cookie, (str,)):
+            raise TypeError(
+                f'token: Expected <str>, got {type(cookie).__name__}')
         if not isinstance(login, (str,)):
             raise TypeError(
                 f'token: Expected <str>, got {type(login).__name__}')
@@ -52,21 +60,24 @@ class Session(__Session):
             raise TypeError(
                 f'ac_id: Expected <str>, got {type(ac_id).__name__}')
 
-        if not re.match(r'^[0-9a-zA-Z]+$', token):
+        if not re.match(r'^v2_[0-9a-zA-Z/=+]+$', token):
             raise ValueError(f'token: Invalid token "{token}"')
-        if not re.match(r'^[0-9a-zA-Z]+$', login):
+        if not re.match(r'^v2_[0-9a-zA-Z/=+]+_[0-9a-zA-Z/=+]+$', cookie):
+            raise ValueError(f'token: Invalid cookie "{cookie}"')
+        if not re.match(r'^[0-9a-zA-Z]+_hy$', login):
             raise ValueError(f'token: Invalid login token "{login}"')
         if not re.match(r'^[0-9a-z]{8}(-[0-9a-z]{4}){3}-[0-9a-z]{12}$', uuid):
             raise ValueError(f'uuid: Invalid UUID "{uuid}"')
 
         super().__init__()
         self.cookies.update({
-            strings.cn_tkn: str(token),
-            strings.cn_aid: str(acid),
-            strings.cn_uid: str(acid),
-            strings.cn_ltk: str(login),
-            strings.cn_gid: str(uuid),
-            strings.cn_lng: 'en-us'
+            strings.cn_ltkn: str(token),
+            strings.cn_ctkn: str(cookie),
+            strings.cn_ltid: str(acid),
+            strings.cn_acid: str(acid),
+            strings.cn_lmid: str(login),
+            strings.cn_amid: str(login),
+            strings.cn_uuid: str(uuid),
         })
         self.cookies.update(kwargs)
         self.headers.update({
@@ -77,8 +88,6 @@ class Session(__Session):
             'Cache-Control': 'no-cache',
             'Sec-Fetch-Site': 'same-site',
             'Accept-Language': 'en-US,en;q=0.5',
-            strings.h_rpc_n: str(uuid),
-            strings.h_rpc_lng_n: 'en',
             'Origin': strings.origin_url_v,
             'Accept': 'application/json, text/plain, */*',
             'Referer': strings.referer_v
@@ -126,15 +135,16 @@ class Session(__Session):
         _data = self.request(method, url, **kwargs)
         if _data and _data.status_code == 200:
             _data = _data.json()
-        if _data['retcode'] == 0:
-            sleep(randrange(1, 4))
-            return _data['data'] or _data['retcode'] == 0
+            if _data['retcode'] == 0:
+                sleep(randrange(1, 4))
+                return _data['data'] or _data['retcode'] == 0
         return None
 
 
-class CheckIn(metaclass=__CheckInMetaClass):
+class CheckIn(metaclass=__DataLoader):
     """ A Certain Anime Game Web Event API client """
 
+    __data__ = 'games'
     __user: dict = None
     __user_makeup: dict = None
     __session: Session = None
@@ -151,7 +161,7 @@ class CheckIn(metaclass=__CheckInMetaClass):
                 f'session: Expected <{Session}>, got {type(session).__name__}')
 
         self.__session = session
-        self.__game = CheckIn.__data.get(game.name)
+        self.__game = CheckIn.data.get(game.name)
 
     def reset(self):
         self.__user = None

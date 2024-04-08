@@ -6,13 +6,17 @@ authors = ["Mubashshir <ahmubashshir@gmail.com>"]
 license = "GPL3"
 
 [tool.poetry.dependencies]
-python = ">=3.7"
+python = ">=3.8"
 requests = "^2.26.0"
 toml = "^0.10.2"
 2captcha-python = "^1.2.1"
+wikitextparser = "^0.55.10"
 
 [tool.poetry.scripts]
 "an-anime-game-check-in" = "an_anime_game_check_in:main"
+
+[tool.poetry.group.dev.dependencies]
+python-dotenv = "^1.0.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
