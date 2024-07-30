@@ -1,11 +1,15 @@
 """ An Anime Game daily check-in api client """
 import re
+from logging import getLogger
 from enum import Enum
 from time import sleep
 from random import randrange
 from requests import Session as __Session
 from binascii import Error as BAError
 from . import strings
+import mylib
+
+logger = getLogger(__name__)
 
 
 class __DataLoader(type):
@@ -33,6 +37,7 @@ class __DataLoader(type):
                                                      if isinstance(x, (str,)) else x)(val)
                         except (UnicodeDecodeError, BAError):
                             cls.__data[game][key] = val
+            logger.debug("data", cls.__data)
         return cls.__data
 
 
@@ -109,8 +114,10 @@ class Session(__Session):
         rsp = self.request('GET', url, params={
             't': int(epoch_now())
         })
+        logger.debug("test resp", rsp)
         if rsp.ok and rsp.headers.get('Content-Type', 'text/plain') == 'application/json':
             rsp = rsp.json()
+        logger.debug("test resp data", rsp)
         return rsp['data'] if rsp['message'] == 'OK' else None
 
     def redeem(self, game, code):
@@ -135,6 +142,7 @@ class Session(__Session):
         _data = self.request(method, url, **kwargs)
         if _data and _data.status_code == 200:
             _data = _data.json()
+            logger.debug("data", path, _data)
             if _data['retcode'] == 0:
                 sleep(randrange(1, 4))
                 return _data['data'] or _data['retcode'] == 0
@@ -212,7 +220,11 @@ class CheckIn(metaclass=__DataLoader):
 
     def makeup(self):
         data = self.__session.post(self.__game, 'resign')
-        return bool(data and data['message'] == '')
+        try:
+            return bool(isinstance(data, (dict,)) and data['message'] == '' or data)
+        except:
+            logger.error("invalid data", data)
+            return False
 
     @property
     def user(self):
