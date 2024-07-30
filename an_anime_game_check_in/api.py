@@ -7,7 +7,6 @@ from random import randrange
 from requests import Session as __Session
 from binascii import Error as BAError
 from . import strings
-import mylib
 
 logger = getLogger(__name__)
 
