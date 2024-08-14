@@ -1,0 +1,5 @@
+__pycache__/
+**/__pycache__/**
+pyenv.cfg
+bin/activate*
+bin/Activate.ps1
