@@ -8,13 +8,13 @@ _str_auth_frg = 'YXBpLWFjY291bnQtb3M='
 _str_auth_prm = 'Z2V0VXNlckFjY291bnRJbmZvQnlMVG9rZW4='
 
 # cookie names
-_str_cn_uuid = 'X01IWVVVSUQ='  # _MHYUUID
-_str_cn_ltkn = 'bHRva2VuX3Yy'  # ltoken_v2
-_str_cn_ctkn = 'Y29va2llX3Rva2VuX3Yy'  # cookie_token_v2
-_str_cn_lmid = 'bHRtaWRfdjI='  # ltmid_v2
-_str_cn_amid = 'YWNjb3VudF9taWRfdjI='  # account_mid_v2
-_str_cn_ltid = 'bHR1aWRfdjI='  # ltuid_v2
-_str_cn_acid = 'YWNjb3VudF9pZF92Mg=='  # account_id_v2
+_str_cn_uuid = 'X01IWVVVSUQ='
+_str_cn_ltkn = 'bHRva2VuX3Yy'
+_str_cn_ctkn = 'Y29va2llX3Rva2VuX3Yy'
+_str_cn_lmid = 'bHRtaWRfdjI='
+_str_cn_amid = 'YWNjb3VudF9taWRfdjI='
+_str_cn_ltid = 'bHR1aWRfdjI='
+_str_cn_acid = 'YWNjb3VudF9pZF92Mg=='
 
 # headers
 _str_origin_url_v = 'aHR0cHM6Ly9hY3QuaG95b2xhYi5jb20='
@@ -33,17 +33,28 @@ def __b64d__(name):
     return data.decode()
 
 
+def decode():
+    for item in filter(lambda x: x.startswith('_str_'), globals()):
+        print((lambda x: (x, __b64d__(x),))(item.removeprefix('_str_')))
+
+
+def b64enc(_str):
+    return standard_b64encode(_str.encode()).decode()
+
+
 if sys.version_info >= (3, 7):
     def __getattr__(name: str) -> str:
         return __b64d__(name)
-
-    def b64enc(_str):
-        return standard_b64encode(_str.encode()).decode()
 else:
     class strings:
-        def b64enc(_str):
-            return standard_b64encode(_str.encode()).decode()
+        def __init__(self, **kwargs):
+            for k, v in kwargs.items():
+                setattr(self, k, v)
 
-        def __getattr__(name: str) -> str:
+        def __getattr__(self, name: str) -> str:
             return __b64d__(name)
-    sys.modules[__name__] = strings()
+
+    sys.modules[__name__] = strings(
+        decode=decode,
+        b64enc=b64enc
+    )
