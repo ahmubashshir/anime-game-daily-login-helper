@@ -134,7 +134,7 @@ class Session(__Session):
 
         data.update({
             'lang': 'en-us',
-            'act_id': game['id']
+            strings.gid: game['id']
         })
 
         url = strings.url.format(root=root, **game).format(path)
@@ -186,21 +186,22 @@ class CheckIn(metaclass=__DataLoader):
         if not self.__tasks:
             ret = {}
             tasks = self.__session.get(
-                self.__game, 'task/list').get('list', [])
+                self.__game, strings.tlist).get(strings.tlist_key, [])
             for task in tasks:
-                ret.update({task['id']: task['status'] == 'TT_Award'})
+                ret.update({task['id']: task['status'] == strings.tstatus})
             self.__tasks = ret
         return self.__tasks
 
     def makeup_claim(self, task):
         def ask(x): return self.__session.post(
             self.__game, x, data={'id': task})
-        return ask('task/complete') and ask('task/award')
+        return ask(strings.tdone) and ask(strings.tprize)
 
     @property
     def __makeup_info(self):
         if not self.__user_makeup:
-            self.__user_makeup = self.__session.get(self.__game, 'resign_info')
+            self.__user_makeup = self.__session.get(
+                self.__game, strings.rsinfo)
         return self.__user_makeup or {}
 
     @property
@@ -208,17 +209,19 @@ class CheckIn(metaclass=__DataLoader):
         def get(x): return self.__makeup_info.get(x)
         def alt(x, y): return self.__makeup_info.get(x, y)
         return all([
-            get('resign_cnt_daily') < get('resign_limit_daily'),
-            get('resign_cnt_monthly') < get('resign_limit_monthly'),
-            get('sign_cnt_missed') > 0
+            get(strings.scount.format('daily')) < get(
+                strings.slimit.format('daily')),
+            get(strings.scount.format('monthly')) < get(
+                strings.slimit.format('monthly')),
+            get(strings.missed_streak) > 0
         ])
 
     @property
     def missed(self):
-        return self.__makeup_info.get('sign_cnt_missed', 0)
+        return self.__makeup_info.get(strings.missed_streak, 0)
 
     def makeup(self):
-        data = self.__session.post(self.__game, 'resign')
+        data = self.__session.post(self.__game, strings.streak_recover)
         try:
             return bool(isinstance(data, (dict,)) and data['message'] == '' or data)
         except:
@@ -229,13 +232,13 @@ class CheckIn(metaclass=__DataLoader):
     def user(self):
         """ User Info """
         if not self.__user:
-            self.__user = self.__session.get(self.__game, 'info')
+            self.__user = self.__session.get(self.__game, strings.authinfo)
         return self.__user or {}
 
     @property
     def done(self):
         """ Did check-in today? """
-        return self.user.get('is_sign', False)
+        return self.user.get(strings.is_claimed, False)
 
     @property
     def name(self):
@@ -245,11 +248,11 @@ class CheckIn(metaclass=__DataLoader):
     @property
     def days(self):
         """ Total days checked-in """
-        return self.user.get('total_sign_day', -1)
+        return self.user.get(strings.streak, -1)
 
     def now(self):
         """ Check-in now """
-        data = self.__session.post(self.__game, 'sign')
+        data = self.__session.post(self.__game, strings.commit)
         return bool(data and data['code'] == 'ok')
 
 # vim: ft=python3:ts=4:et:
